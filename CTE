@@ -1,0 +1,42 @@
+The first query finds the top five movies by revenue from a rental database, showing their titles, revenue, genre, and rating.
+
+The second query summarizes revenue by genre, displaying each genre and its total revenue in descending order.
+
+WITH Calculations AS (	
+	    SELECT 	
+	        D.title,	
+		    D.rating,
+		    F.name,
+	        SUM(A.amount) AS Revenue	
+	    FROM payment A	
+	    INNER JOIN rental B ON A.rental_id = B.rental_id	
+	    INNER JOIN inventory C ON B.inventory_ID = C.inventory_ID	
+	    INNER JOIN film D ON C.film_id = D.film_id	
+		INNER JOIN film_category E ON C.film_id = E.film_id
+		INNER JOIN category F ON E.category_id = F.category_id
+	    GROUP BY D.title, D.rental_duration, D.rental_rate, D.rating, F.name	
+	)	
+	SELECT 	
+	    title,	
+	    Revenue,	
+		name,
+		rating
+	FROM calculations	
+	ORDER BY revenue ASC	
+	LIMIT 5;WITH Calculations AS (	
+	    SELECT 	
+	        F.name AS Genre,	
+	        SUM(A.amount) AS Revenue	
+	    FROM payment A	
+	    INNER JOIN rental B ON A.rental_id = B.rental_id	
+	    INNER JOIN inventory C ON B.inventory_ID = C.inventory_ID	
+	    INNER JOIN film D ON C.film_id = D.film_id	
+	    INNER JOIN film_category E ON C.film_id = E.film_id	
+	    INNER JOIN category F ON E.category_id = F.category_id	
+	    GROUP BY F.name	
+	)	
+	SELECT 	
+	    Genre,	
+	    Revenue	
+	FROM Calculations	
+	ORDER BY Revenue DESC;	
